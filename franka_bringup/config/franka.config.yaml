@@ -4,7 +4,7 @@
 # namespaced or non-namespaced environments.
 # Version: 1.0.0 (Updated: 2025-04-24)
 #
-# Note: This is a launch configuration file, not a node parameter file (see: ns-controllers.yaml).
+# Note: This is a launch configuration file, not a node parameter file (see: controllers.yaml).
 # Ensure all boolean values are quoted ("true" or "false") to avoid YAML parsing issues.
 # Not all parameters are currently used but are included for future compatibility.
 # Ensure each robot has a unique namespace to prevent topic conflicts.

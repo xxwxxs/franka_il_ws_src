@@ -183,6 +183,15 @@ To verify that your setup works correctly without a robot, you can run the follo
 ros2 launch franka_fr3_moveit_config moveit.launch.py robot_ip:=dont-care use_fake_hardware:=true
 ```
 
+# Run a ROS 2 example controller
+
+To run any example controller, make sure to add your desired configuration in `franka.config.yaml` and run:
+
+```bash
+ros2 launch franka_bringup example.launch.py controller_name:=your_desired_controller
+```
+You can select one of the controllers from `controllers.yaml`.
+
 # Run Gazebo examples with ROS 2
 
 If you want to use Gazebo to run your code, you can find some examples here: [franka_gazebo](./franka_gazebo/README.md)

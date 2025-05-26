@@ -16,7 +16,7 @@
 # Parameters:
 # controller_name: Name of the controller to spawn (required, no default)
 # robot_config_file: Path to the robot configuration file to load
-#                   (default: franka.ns-config.yaml in franka_bringup/config)
+#                   (default: franka.config.yaml in franka_bringup/config)
 #
 # The example.launch.py launch file provides a flexible and unified interface
 # for launching Franka Robotics example controllers via the 'controller_name'
@@ -24,14 +24,14 @@
 # Example:
 # ros2 launch franka_bringup example.launch.py controller_name:=elbow_example_controller
 #
-# This script "includes" franka.ns-launch.py to declare core component nodes,
+# This script "includes" franka.launch.py to declare core component nodes,
 # including: robot_state_publisher, ros2_control_node, joint_state_publisher,
 # joint_state_broadcaster, franka_robot_state_broadcaster, and optionally
 # franka_gripper and rviz, with support for namespaced and non-namespaced
-# environments as defined in franka.ns-config.yaml. RViz is launched if
+# environments as defined in franka.config.yaml. RViz is launched if
 # 'use_rviz' is set to true in the configuration file.
 #
-# The default robot_config_file is franka.ns-config.yaml in the
+# The default robot_config_file is franka.config.yaml in the
 # franka_bringup/config directory. See that file for its own documentation.
 #
 # This approach improves upon the earlier individual launch scripts, which
@@ -41,7 +41,7 @@
 # for a wide range of Franka Robotics applications.
 #
 # Ensure the specified  controller_name matches a controller defined in
-#  ns-controllers.yaml to avoid runtime errors.
+#  controllers.yaml to avoid runtime errors.
 ############################################################################
 
 
@@ -64,7 +64,7 @@ def load_yaml(file_path):
         return yaml.safe_load(file)
 
 # Iterates over the uncommented lines in file specified by the robot_config_file parameter.
-# "Includes" franka.ns-launch.py for each active (uncommented) Robot.
+# "Includes" franka.launch.py for each active (uncommented) Robot.
 # That file is well documented.
 # The function also checks if the 'use_rviz' parameter is set to true in the YAML file.
 # If so, it includes a node for RViz to visualize the robot's state.
@@ -82,7 +82,7 @@ def generate_robot_nodes(context):
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     PathJoinSubstitution([
-                        FindPackageShare('franka_bringup'), 'launch', 'franka.ns-launch.py'
+                        FindPackageShare('franka_bringup'), 'launch', 'franka.launch.py'
                     ])
                 ),
                 launch_arguments={
@@ -106,7 +106,7 @@ def generate_robot_nodes(context):
                 namespace=namespace,
                 arguments=[controller_name, '--controller-manager-timeout', '30'],
                 parameters=[PathJoinSubstitution([
-                    FindPackageShare('franka_bringup'), 'config', "ns-controllers.yaml",
+                    FindPackageShare('franka_bringup'), 'config', "controllers.yaml",
 
                 ])],
                 output='screen',
@@ -119,7 +119,7 @@ def generate_robot_nodes(context):
                 executable='rviz2',
                 name='rviz2',
                 arguments=['--display-config', PathJoinSubstitution([
-                    FindPackageShare('franka_description'), 'rviz', 'visualize_franka_duo.rviz'
+                    FindPackageShare('franka_description'), 'rviz', 'visualize_franka.rviz'
                 ])],
                 output='screen',
             )
@@ -138,7 +138,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'robot_config_file',
             default_value=PathJoinSubstitution([
-                FindPackageShare('franka_bringup'), 'config', 'franka.ns-config.yaml'
+                FindPackageShare('franka_bringup'), 'config', 'franka.config.yaml'
             ]),
             description='Path to the robot configuration file to load',
         ),

@@ -14,10 +14,19 @@ v1.0.1 (2025-05-26)
 
 Requires libfranka >= 0.15.0 and franka_description >= 0.5.0 requires ROS 2 Humble
 
-* Add: example.launch.py - single launch script to launch any example 0->many namespaces
-* Add: franka.ns-launch.yaml launch Base (recommended/required) controllers
-* Add: franka.ns-config.yaml to configure the namespaces of the multiple robots
-* Add: ns-controllers.yaml controller file for namespace agnostic launch of existing controllers.
+* BREAKING CHANGE: `franka.launch.py` is adapted to use namespaces
+* BREAKING CHANGE: the controller examples were removed to use a single launch script named `example.launch.py`, which can launch multiple robots and takes the arguments from a config file named `franka.config.yaml`
+* Add: `example.launch.py` - a single launch script to launch any number of namespaces
+* Feat: `franka.launch.py` can launch different robots in specific namespaces
+* Add: `franka.config.yaml` to configure the input arguments for multiple robots
+* Add: `controllers.yaml` controller file for namespace-agnostic launch of existing controllers
+
+
+v1.0.1 (2025-05-26)
+------------------
+
+Requires libfranka >= 0.15.0 and franka_description >= 0.5.0 requires ROS 2 Humble
+
 * Fix: FrankaRobotStateBroadcaster Lock issue - add configurable timeout (see controllers.yaml)
 * Add: vcstool import for compatible libfranka and franka_description
 * Fix: Franka robot state broadcaster GitHub Issue #94 and #105
@@ -26,7 +35,6 @@ Requires libfranka >= 0.15.0 and franka_description >= 0.5.0 requires ROS 2 Humb
 * Chore: Eliminate annoying CMake configure time messages
 * Feat: Added prefix to single robot control
 * Doc: Added a link to the Gazebo README.md for better visibility
-
 * Breaking feat: Automatically spawn command interfaces depending on the configured ones coming from the URDF
 
 
