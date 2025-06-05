@@ -169,7 +169,6 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        namespace=namespace,
         output='log',
         arguments=['-d', rviz_full_config],
         parameters=[
@@ -200,7 +199,7 @@ def generate_launch_description():
         executable='ros2_control_node',
         namespace=namespace,
         parameters=[robot_description, ros2_controllers_path],
-        remappings=[('joint_states', [namespace, '/franka/joint_states'])],
+        remappings=[('joint_states', 'franka/joint_states')],
         output={
             'stdout': 'screen',
             'stderr': 'screen',
@@ -248,6 +247,7 @@ def generate_launch_description():
     
     namespace_arg = DeclareLaunchArgument(
         namespace_parameter_name,
+        default_value='',
         description='Namespace for the robot.'
     )
     use_fake_hardware_arg = DeclareLaunchArgument(
