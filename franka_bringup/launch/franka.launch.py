@@ -129,6 +129,7 @@ def generate_robot_nodes(context):
                 controllers_yaml,
                 {'robot_description': robot_description},
                 {'load_gripper': load_gripper}],
+            remappings=[('joint_states', 'franka/joint_states')],
             output='screen',
             on_exit=Shutdown(),
         ),
@@ -138,7 +139,7 @@ def generate_robot_nodes(context):
             name='joint_state_publisher',
             namespace=namespace,
             parameters=[{
-                'joints': joint_sources,
+                'source_list': joint_sources,
                 'rate': joint_state_rate,
                 'use_robot_description': False,
             }],
