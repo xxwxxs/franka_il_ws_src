@@ -36,22 +36,22 @@ This repository contains a `.repos` file that helps you clone the required depen
 ## Local Machine Installation
 1. **Install ROS 2 Development environment**
 
-    _**franka_ros2**_ is built upon _**ROS 2 jazzy**_.
+    _**franka_ros2**_ is built upon _**ROS 2 humble**_.
 
-    To set up your ROS 2 environment, follow the official _**jazzy**_ installation instructions provided [**here**](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html).
+    To set up your ROS 2 environment, follow the official _**humble**_ installation instructions provided [**here**](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html).
     The guide discusses two main installation options: **Desktop** and **Bare Bones**.
 
     ### Choose **one** of the following:
-    - **ROS 2 "Desktop Install"** (`ros-jazzy-desktop`)
+    - **ROS 2 "Desktop Install"** (`ros-humble-desktop`)
       Includes a full ROS 2 installation with GUI tools and visualization packages (e.g., Rviz and Gazebo).
       **Recommended** for users who need simulation or visualization capabilities.
 
-    - **"ROS-Base Install (Bare Bones)"** (`ros-jazzy-ros-base`)
+    - **"ROS-Base Install (Bare Bones)"** (`ros-humble-ros-base`)
       A minimal installation that includes only the core ROS 2 libraries.
       Suitable for resource-constrained environments or headless systems.
 
     ```bash
-    # replace <YOUR CHOICE> with either ros-jazzy-desktop or ros-jazzy-ros-base
+    # replace <YOUR CHOICE> with either ros-humble-desktop or ros-humble-ros-base
     sudo apt install <YOUR CHOICE>
     ```
     ---
@@ -61,7 +61,7 @@ This repository contains a `.repos` file that helps you clone the required depen
     ```
     Installing the **Desktop** or **Bare Bones** should automatically source the **ROS 2** environment but, under some circumstances you may need to do this again:
     ```bash
-    source /opt/ros/jazzy/setup.sh
+    source /opt/ros/humble/setup.sh
     ```
 
 2. **Create a ROS 2 Workspace:**
@@ -79,7 +79,7 @@ This repository contains a `.repos` file that helps you clone the required depen
     ```
 5. **Detect and install project dependencies**
    ```bash
-   rosdep install --from-paths src --ignore-src --rosdistro jazzy -y
+   rosdep install --from-paths src --ignore-src --rosdistro humble -y
    ```
 6. **Build**
    ```bash
@@ -212,7 +212,7 @@ A real-time kernel is essential to ensure proper communication and to prevent ti
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/frankarobotics/franka_ros2/blob/jazzy/CONTRIBUTING.md) for more details on how to contribute to this project.
+Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/frankarobotics/franka_ros2/blob/humble/CONTRIBUTING.md) for more details on how to contribute to this project.
 
 ## License
 
