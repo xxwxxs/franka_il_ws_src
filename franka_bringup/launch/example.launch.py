@@ -139,11 +139,6 @@ def generate_robot_nodes(context):
                     arguments=[controller_name, '--controller-manager-timeout', '30'],
                     parameters=[PathJoinSubstitution([
                         FindPackageShare('franka_bringup'), 'config', 'controllers.yaml',
-                        [
-                            FindPackageShare('franka_bringup'),
-                            'config',
-                            'controllers.yaml',
-                        ]
                     ])],
                     output='screen',
                 )
