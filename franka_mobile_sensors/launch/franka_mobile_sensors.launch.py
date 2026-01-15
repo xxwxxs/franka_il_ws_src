@@ -43,14 +43,14 @@ def generate_launch_description() -> LaunchDescription:
             description='Whether to start RViz visualization'
         ),
         DeclareLaunchArgument(
-            'robot_type',
-            default_value='tmrv0_2',
-            description='ID of the arm for visualization'
-        ),
-        DeclareLaunchArgument(
             'config_file',
             default_value='default_sensor_suite',
             description='Configuration file to use (without .yaml extension)'
+        ),
+        DeclareLaunchArgument(
+            'robot_xacro',
+            default_value='tmrv0_2_with_sensors.xacro',
+            description='XACRO file for robot with sensors'
         ),
     ]
     
@@ -74,12 +74,12 @@ def generate_launch_description() -> LaunchDescription:
         condition=IfCondition(LaunchConfiguration('start_lidars'))
     )
     
-    viz_launch = IncludeLaunchDescription(
+    rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             pkg_dir, '/launch/visualization/rviz.launch.py'
         ]),
         launch_arguments={
-            'robot_type': LaunchConfiguration('robot_type'),
+            'robot_xacro': LaunchConfiguration('robot_xacro'),
         }.items(),
         condition=IfCondition(LaunchConfiguration('start_rviz'))
     )
@@ -88,7 +88,7 @@ def generate_launch_description() -> LaunchDescription:
         *global_args,
         camera_launch,
         lidar_launch, 
-        viz_launch,
+        rviz_launch,
     ])
 
 

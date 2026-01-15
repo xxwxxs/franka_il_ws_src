@@ -11,3 +11,4 @@ install/
 log/
 libfranka
 franka_description
+olvx_descriptions_module

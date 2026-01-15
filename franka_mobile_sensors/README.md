@@ -7,8 +7,19 @@ ROS 2 package for managing RealSense cameras and SICK safety scanners on Franka 
 This package is **ignored by colcon by default** (via `COLCON_IGNORE` file). It is only relevant for users of a Franka Tactile Mobile Robot (TMR) or a Franka Mobile FR3 Duo. If you want to enable this package, remove the `COLCON_IGNORE` file:
 
 ```bash
+# Remove COLCON_IGNORE
 rm src/franka_mobile_sensors/COLCON_IGNORE
-colcon build --packages-select franka_mobile_sensors --symlink-install
+
+# Import optional dependencies
+vcs import src < src/franka_mobile_sensors/mobile_sensors.repos
+
+# Install package dependencies
+sudo apt-get update
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+
+# Build
+colcon build --packages-up-to franka_mobile_sensors --symlink-install
 ```
 
 ## Launch
