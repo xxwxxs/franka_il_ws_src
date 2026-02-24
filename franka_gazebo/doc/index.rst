@@ -68,20 +68,7 @@ Then you can run with the following command.
 Joint Impedance Control Example with Gazebo
 --------------------------------------------
 
-For running torque example. You must compile the `franka_ign_ros2_control` package located under `franka_gazebo`.
-You can compile `franka_ign_ros2_control` with the following command.
-
-.. code-block:: shell
-
-    colcon build --packages-select franka_ign_ros2_control
-
-Then source your workspace.
-
-.. code-block:: shell
-
-    source install/setup.sh
-
-Then you can run the impedance control example.
+For running torque example:
 
 .. code-block:: shell
 
@@ -93,12 +80,12 @@ Multi-Robot Control Example with Gazebo
 
 For running multiple robots simultaneously in Gazebo, each in their own namespace with dedicated URDFs. The example is designed to be run with two `fr3v2` and one `tmrv0_2`.
 
-First, configure the robots in `/ros2_ws/src/franka_bringup/config/franka.config.yaml`. Uncomment and set `robot_type` and `arm_prefix` for each robot you want to spawn. 
+First, configure the robots in `franka_bringup/config/franka.config.yaml`. Uncomment and set `robot_type` and `arm_prefix` for each robot you want to spawn. 
 Ensure `franka_example_controllers` and `franka_description` are built.
 
 .. code-block:: shell
 
-    colcon build --packages-select franka_example_controllers
+    colcon build --packages-up-to franka_example_controllers
 
 Then source your workspace.
 

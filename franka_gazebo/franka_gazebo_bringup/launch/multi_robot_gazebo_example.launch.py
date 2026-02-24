@@ -14,7 +14,6 @@
 
 import os
 import xacro
-import importlib.util
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription, LaunchContext
@@ -31,25 +30,12 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+import franka_bringup.launch_utils as launch_utils
 
 
-# --------------------------------------------------------
-# Load YAML helper
-# --------------------------------------------------------
 package_share = get_package_share_directory('franka_bringup')
-utils_path = os.path.abspath(
-    os.path.join(package_share, '..', '..', 'lib', 'franka_bringup', 'utils')
-)
-launch_utils_path = os.path.join(utils_path, 'launch_utils.py')
-spec = importlib.util.spec_from_file_location('launch_utils', launch_utils_path)
-launch_utils = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(launch_utils)
 load_yaml = launch_utils.load_yaml
 
-
-# --------------------------------------------------------
-# Per-robot setup
-# --------------------------------------------------------
 def get_robot_nodes(context: LaunchContext, robot_cfg):
     namespace = robot_cfg['namespace']
     robot_type = robot_cfg['robot_type']
@@ -93,9 +79,6 @@ def get_robot_nodes(context: LaunchContext, robot_cfg):
     pos = positions[index[arm_prefix]]
     controller = controllers[index[arm_prefix]]
 
-    # ----------------------------------------------------
-    # Robot State Publisher (namespaced)
-    # ----------------------------------------------------
     rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -107,10 +90,6 @@ def get_robot_nodes(context: LaunchContext, robot_cfg):
         output='screen'
     )
 
-    # ----------------------------------------------------
-    # Spawn robot into Gazebo
-    # (Gazebo creates ros2_control + controller_manager)
-    # ----------------------------------------------------
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
@@ -127,10 +106,7 @@ def get_robot_nodes(context: LaunchContext, robot_cfg):
         output='screen'
     )
 
-    # ----------------------------------------------------
-    # Load controllers AFTER spawn
-    # ----------------------------------------------------
-    load_jsb = ExecuteProcess(
+    load_joint_state_broadcaster = ExecuteProcess(
         cmd=[
             'ros2', 'control', 'load_controller',
             '--controller-manager', f'/{namespace}/controller_manager',
@@ -150,22 +126,18 @@ def get_robot_nodes(context: LaunchContext, robot_cfg):
         output='screen'
     )
 
-
-    # ----------------------------------------------------
-    # Event ordering
-    # ----------------------------------------------------
-    load_jsb_event = RegisterEventHandler(
+    load_joint_state_broadcaster_event = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=spawn_robot,
             on_exit=[
-                TimerAction(period=1.0, actions=[load_jsb])
+                TimerAction(period=1.0, actions=[load_joint_state_broadcaster])
             ]
         )
     )
 
     load_controller_event = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=load_jsb,
+            target_action=load_joint_state_broadcaster,
             on_exit=[
                 TimerAction(period=0.5, actions=[load_controller])
             ]
@@ -175,14 +147,10 @@ def get_robot_nodes(context: LaunchContext, robot_cfg):
     return [
         rsp_node,
         spawn_robot,
-        load_jsb_event,
+        load_joint_state_broadcaster_event,
         load_controller_event,
     ]
 
-
-# --------------------------------------------------------
-# Main launch
-# --------------------------------------------------------
 def generate_launch_description():
 
     robot_config_file_arg = DeclareLaunchArgument(
@@ -202,9 +170,6 @@ def generate_launch_description():
         if key.startswith('ROBOT') and cfg.get('robot_type')
     ]
 
-    # ----------------------------------------------------
-    # Gazebo (single, global)
-    # ----------------------------------------------------
     os.environ['GZ_SIM_RESOURCE_PATH'] = os.path.dirname(
         get_package_share_directory('franka_description')
     )

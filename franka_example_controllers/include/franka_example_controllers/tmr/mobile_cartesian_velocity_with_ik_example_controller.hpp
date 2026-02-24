@@ -1,14 +1,30 @@
+// Copyright (c) 2026 Franka Robotics GmbH
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #pragma once
 
 #include <Eigen/Dense>
+#include <array>
 #include <cmath>
 #include <string>
 #include <vector>
 #include "controller_interface/controller_interface.hpp"
+#include "franka_example_controllers/tmr/swerve_ik.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 
-namespace franka_mobile_example_controllers {
+namespace franka_example_controllers {
 
 class MobileCartesianVelocityWithIkExampleController
     : public controller_interface::ControllerInterface {
@@ -25,28 +41,21 @@ class MobileCartesianVelocityWithIkExampleController
   // Robot params
   std::string mobile_robot_type_ = "tmrv0_2";
   static constexpr size_t kNumberOfWheels = 2;
-  double wheel_radius_ = 0.05;                                 // m
-  Eigen::Matrix<double, kNumberOfWheels, 2> wheel_positions_;  // x, y
+  double wheel_radius_ = 0.05;
+  Eigen::Vector4d wheel_positions_;
 
   // Sinusoidal trajectory
   double elapsed_time_ = 0.0;
-  double freq_ = 0.5;  // Hz
+  double freq_ = 0.5;
   double vx_amp_ = 0.2;
   double vy_amp_ = 0.0;
-  double wz_amp_ = M_PI / 8.0;  // rad/s
+  double wz_amp_ = M_PI / 8.0;
 
   // IK state
-  Eigen::Array<double, kNumberOfWheels, 1> steering_angles_;
-  Eigen::Array<double, kNumberOfWheels, 1> wheel_velocities_;
+  Eigen::Vector4d steering_angles_;
+  Eigen::Vector4d wheel_velocities_;
 
-  struct WheelCommand {
-    double steering_angle = 0.0;
-    double wheel_velocity = 0.0;
-  };
-  std::vector<WheelCommand> commands_{kNumberOfWheels};
-
-  // IK computation
-  void computeSwerveIK(double vx, double vy, double wz);
+  std::array<WheelCommand, 2> commands_;
 };
 
-}  // namespace franka_mobile_example_controllers
+}  // namespace franka_example_controllers

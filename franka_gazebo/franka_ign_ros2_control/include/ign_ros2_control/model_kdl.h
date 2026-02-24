@@ -14,9 +14,8 @@
 
 #pragma once
 
-
-#include "urdf/model.h"
 #include "franka/model.h"
+#include "urdf/model.h"
 
 #include <array>
 #include <memory>
@@ -31,7 +30,7 @@
  * dynamic and kinematic properties of the robot.
  */
 class ModelKDL {
-public:
+ public:
   /**
    * Default constructor.
    * Creates an empty ModelKDL object.
@@ -46,7 +45,14 @@ public:
    * @throws std::invalid_argument when either `root` or `tip` cannot be found
    * in the URDF
    */
-  ModelKDL(const urdf::Model & model, const std::string & root, const std::string & tip);
+  ModelKDL(const urdf::Model& model, const std::string& root, const std::string& tip);
+
+  /**
+   * Get the number of joints in the chain.
+   *
+   * @return Number of joints.
+   */
+  unsigned int getNrOfJoints() const { return chain_.getNrOfJoints(); }
 
   /**
    * Calculates the gravity vector. Unit: \f$[Nm]\f$.
@@ -60,11 +66,10 @@ public:
    *
    * @return Gravity vector.
    */
-  std::array < double, 7 > gravity(
-    const std::array < double, 7 > &q,
-    const std::array < double, 3 > &gravity_earth) const;
+  std::array<double, 7> gravity(const std::array<double, 7>& q,
+                                const std::array<double, 3>& gravity_earth) const;
 
-private:
+ private:
   static int segment(franka::Frame frame);
   static std::string strError(const int error);
 

@@ -16,7 +16,7 @@
         type: joint_state_broadcaster/JointStateBroadcaster
       
       mobile_cartesian_velocity_with_ik_example_controller:
-        type: franka_mobile_example_controllers/MobileCartesianVelocityWithIkExampleController
+        type: franka_example_controllers/MobileCartesianVelocityWithIkExampleController
 
 /**:
   joint_position_example_controller:

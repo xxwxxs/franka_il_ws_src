@@ -606,7 +606,7 @@ hardware_interface::return_type IgnitionSystem::write(const rclcpp::Time& /*time
 
   // Compute gravity compensation efforts
   std::array<double, 7> joint_efforts = {0.0};
-  if (num_joints >= 7) {  // For robots with at least 7 joints (e.g., Franka arm)
+  if (kdl_model_.getNrOfJoints() == 7) {  // Only for 7-DOF manipulators
     try {
       joint_efforts = kdl_model_.gravity(q, gravity_earth);
     } catch (const std::logic_error& e) {
