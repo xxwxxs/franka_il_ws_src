@@ -38,5 +38,4 @@ ROBOT1: # Arbitrary identifier for the first robot (a Mnemonic)
 #   namespace: "NS_3"
 #   robot_ip: "172.16.0.5"
 #   use_fake_hardware: "false"
-#   use_rviz: "false"  
-
+#   use_rviz: "false" 

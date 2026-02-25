@@ -298,7 +298,7 @@ bool IgnitionSystem::initSim(
             mimic_joint.interfaces_to_mimic.push_back(hardware_interface::HW_IF_VELOCITY);
           }
           bool eff = interface_info.name == "effort";
-          if (vel) {
+          if (eff) {
             mimic_joint.interfaces_to_mimic.push_back(hardware_interface::HW_IF_EFFORT);
           }
           return pos || vel || eff;
@@ -640,23 +640,24 @@ hardware_interface::return_type IgnitionSystem::write(
   const rclcpp::Duration & /*period*/)
 {
   // Assuming there are 7 joints and gravity_earth is defined
-  std::array<double, 7> q;
+  const size_t num_joints = this->dataPtr->joints_.size();
+  std::array<double, 7> q = {0.0};
   std::array<double, 3> gravity_earth{0.0, 0.0, -9.8};  // Earth gravity in m/s^2
 
   // Collect joint positions
-  for (size_t i = 0; i < this->dataPtr->joints_.size(); ++i) {
-    if (i < q.size()) {
-      q[i] = this->dataPtr->joints_[i].joint_position;
-    }
+  for (size_t i = 0; i < num_joints && i < q.size(); ++i) {
+    q[i] = this->dataPtr->joints_[i].joint_position;
   }
 
   // Compute gravity compensation efforts
-  std::array<double, 7> joint_efforts;
-  try {
-    joint_efforts = kdl_model_.gravity(q, gravity_earth);
-  } catch (const std::logic_error & e) {
-    RCLCPP_ERROR(this->nh_->get_logger(), "Gravity compensation error: %s", e.what());
-    return hardware_interface::return_type::ERROR;
+  std::array<double, 7> joint_efforts = {0.0};
+  if (kdl_model_.getNrOfJoints() == 7) {  // Only for 7-DOF manipulators
+    try {
+      joint_efforts = kdl_model_.gravity(q, gravity_earth);
+    } catch (const std::logic_error & e) {
+      RCLCPP_ERROR(this->nh_->get_logger(), "Gravity compensation error: %s", e.what());
+      return hardware_interface::return_type::ERROR;
+    }
   }
 
   for (unsigned int i = 0; i < this->dataPtr->joints_.size(); ++i) {
@@ -711,7 +712,9 @@ hardware_interface::return_type IgnitionSystem::write(
           this->dataPtr->joints_[i].sim_joint);
         *jointEffortCmd = ignition::gazebo::components::JointForceCmd(
           {this->dataPtr->joints_[i].joint_effort_cmd});
-        jointEffortCmd->Data()[0] += joint_efforts[i];
+        if (i < 7) {
+          jointEffortCmd->Data()[0] += joint_efforts[i];
+        }
       }
     } else if (this->dataPtr->joints_[i].is_actuated) {
       // Fallback case is a velocity command of zero (only for actuated joints)

@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Franka Robotics GmbH
+// Copyright (c) 2026 Franka Robotics GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,45 +14,50 @@
 
 #pragma once
 
-#include <memory>
+#include <Eigen/Dense>
+#include <array>
+#include <cmath>
 #include <string>
-
-#include <Eigen/Eigen>
-#include <controller_interface/controller_interface.hpp>
-#include <rclcpp/rclcpp.hpp>
-
-#include "motion_generator.hpp"
-
-using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+#include <vector>
+#include "controller_interface/controller_interface.hpp"
+#include "franka_example_controllers/tmr/swerve_ik.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 
 namespace franka_example_controllers {
 
-/// The move to start example controller moves the robot into default pose.
-class MoveToStartExampleController : public controller_interface::ControllerInterface {
+class MobileCartesianVelocityWithIkExampleController
+    : public controller_interface::ControllerInterface {
  public:
-  using Vector7d = Eigen::Matrix<double, 7, 1>;
+  MobileCartesianVelocityWithIkExampleController() = default;
+
+  controller_interface::CallbackReturn on_init() override;
   [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
       const override;
   [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
       const override;
   controller_interface::return_type update(const rclcpp::Time& time,
                                            const rclcpp::Duration& period) override;
-  CallbackReturn on_init() override;
-  CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
-  CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
 
  private:
-  std::string robot_type_;
-  const int num_joints = 7;
-  Vector7d q_;
-  Vector7d q_goal_;
-  Vector7d dq_;
-  Vector7d dq_filtered_;
-  Vector7d k_gains_;
-  Vector7d d_gains_;
-  rclcpp::Time start_time_;
-  std::unique_ptr<MotionGenerator> motion_generator_;
+  // Robot params
+  std::string mobile_robot_type_ = "tmrv0_2";
+  static constexpr size_t kNumberOfWheels = 2;
+  double wheel_radius_ = 0.05;
+  Eigen::Vector4d wheel_positions_;
 
-  void updateJointStates();
+  // Sinusoidal trajectory
+  double elapsed_time_ = 0.0;
+  double freq_ = 0.5;
+  double vx_amp_ = 0.2;
+  double vy_amp_ = 0.0;
+  double wz_amp_ = M_PI / 8.0;
+
+  // IK state
+  Eigen::Vector4d steering_angles_;
+  Eigen::Vector4d wheel_velocities_;
+
+  std::array<WheelCommand, 2> commands_;
 };
+
 }  // namespace franka_example_controllers

@@ -59,11 +59,25 @@ ros2 launch franka_gazebo_bringup gazebo_joint_position_controller_example.launc
 
 ## Joint Impedance Control Example with Gazebo
 
-For running torque example. You must compile the `franka_ign_ros2_control` package located under `franka_gazebo`.
-You can compile `franka_ign_ros2_control` with the following command.
+For running torque example: 
 
 ```bash
-colcon build --packages-select franka_ign_ros2_control
+ros2 launch franka_gazebo_bringup gazebo_joint_impedance_controller_example.launch.py load_gripper:=true franka_hand:='franka_hand'
+```
+
+
+## Multi-Robot Joint Velocity Control Example with Gazebo
+
+For running multiple robots simultaneously in Gazebo, each in their own namespace with dedicated URDFs.
+
+First, configure the robots in `/ros2_ws/src/franka_bringup/config/franka.config.yaml`. Uncomment and set `robot_type` for the desired number of robots (e.g., ROBOT1, ROBOT2, ROBOT3).
+
+Multi-robot configurations (positions and controllers) are defined in `franka_gazebo_bringup/config/gazebo_multi_robot_configs.yaml`.
+
+Ensure `franka_example_controllers` and `franka_description` are built.
+
+```bash
+colcon build --packages-select franka_example_controllers
 ```
 
 Then source your workspace.
@@ -72,11 +86,13 @@ Then source your workspace.
 source install/setup.sh
 ```
 
-Then you can run the impedance control example.
+Then you can run the multi-robot velocity control example.
 
 ```bash
-ros2 launch franka_gazebo_bringup gazebo_joint_impedance_controller_example.launch.py load_gripper:=true franka_hand:='franka_hand'
+ros2 launch franka_gazebo_bringup multi_robot_gazebo_example.launch.py 
 ```
+
+This will launch Gazebo with the configured robots, each in their own namespace, with controllers loaded. Use `with_sensors:=true` to enable sensor-enhanced descriptions for `tmrv0_2` robots.
 
 
 ## Throubleshooting

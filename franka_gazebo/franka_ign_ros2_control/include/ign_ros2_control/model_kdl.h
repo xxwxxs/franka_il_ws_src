@@ -14,9 +14,8 @@
 
 #pragma once
 
-
-#include "urdf/model.h"
 #include "franka/model.h"
+#include "urdf/model.h"
 
 #include <array>
 #include <memory>
@@ -47,6 +46,13 @@ public:
    * in the URDF
    */
   ModelKDL(const urdf::Model & model, const std::string & root, const std::string & tip);
+
+  /**
+   * Get the number of joints in the chain.
+   *
+   * @return Number of joints.
+   */
+  unsigned int getNrOfJoints() const {return chain_.getNrOfJoints();}
 
   /**
    * Calculates the gravity vector. Unit: \f$[Nm]\f$.
