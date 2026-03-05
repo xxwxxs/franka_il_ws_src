@@ -41,6 +41,10 @@ pipeline {
             description: "The static IP of the robot to run tests onto")
   }
 
+  environment {
+    HOME="${WORKSPACE}" // for cleaning up ros logs
+  }
+
 
   stages {
     stage('Get Ready') {
