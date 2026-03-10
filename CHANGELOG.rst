@@ -1,9 +1,9 @@
 Changelog for package franka_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-UNRELEASED
-----------
-Requires libfranka >= 0.20.4 and franka_description >= 2.4.0 requires ROS 2 Jazzy
+v2.3.0 (2026-03-10)
+-------------------
+Requires libfranka >= 0.20.4 and franka_description >= 1.6.1 requires ROS 2 Humble
 
 * feat: integration_launch_testing: added smoke tests for the example controllers
 * feat: franka_mobile_sensors: add visualization of sensors in rviz
