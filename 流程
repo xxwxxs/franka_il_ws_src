@@ -1,0 +1,87 @@
+启动联合阻抗控制器  ros2 launch franka_arm_controllers joint_impedance_ik_controller.launch.py robot_config_file:=example_fr3_config.yaml
+ 
+ 
+ 运行 SpaceMouse Publisher  ros2 launch spacemouse_publisher spacemouse_publisher.launch.py config_file:=example_fr3_config.yaml
+  
+  
+  启动抓取器管理器ros2 launch gripper_manager franka_gripper_client.launch.py config_file:=example_fr3_config.yaml
+
+
+
+
+
+
+
+
+export http_proxy="http://127.0.0.1:7890"
+export https_proxy="http://127.0.0.1:7890"
+
+
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch franka_arm_controllers joint_impedance_ik_controller.launch.py \
+  robot_config_file:=example_fr3_config.yaml \
+  spawn_franka_robot_state_broadcaster:=false
+  
+  
+  
+  
+  
+  
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 control list_controllers -c /controller_manager
+sleep 1
+ros2 control list_controllers -c /controller_manager
+sleep 1
+ros2 control list_controllers -c /controller_manager
+
+
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch spacemouse_publisher spacemouse_publisher.launch.py config_file:=example_fr3_config.yaml
+
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 param get /spacemouse_publisher command_mode
+ros2 param get /spacemouse_publisher enable_deadman
+ros2 param get /spacemouse_publisher axis_mapping_linear
+ros2 param get /spacemouse_publisher axis_mapping_angular
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  

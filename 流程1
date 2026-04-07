@@ -1,0 +1,27 @@
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch franka_arm_controllers joint_impedance_ik_controller.launch.py \
+  robot_config_file:=example_fr3_config.yaml \
+  start_controller_inactive:=true \
+  spawn_franka_robot_state_broadcaster:=false
+  
+  
+  source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+ros2 control list_controllers
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+ros2 control set_controller_state joint_impedance_ik_controller active
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch spacemouse_publisher spacemouse_publisher.launch.py config_file:=example_fr3_config.yaml

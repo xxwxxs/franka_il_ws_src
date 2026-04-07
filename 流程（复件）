@@ -1,0 +1,311 @@
+# Franka FR3 + SpaceMouse 完整搭建与调试流程（实战版）
+
+## 一、目标
+
+实现：
+
+* FR3 真机通过 FCI 与工作站通信
+* ROS 2 Humble + franka_ros2 正常运行
+* SpaceMouse 实时控制机械臂（阻抗控制）
+
+---
+
+## 二、推荐环境
+
+### 工作站
+
+* Ubuntu 22.04
+* ROS 2 Humble
+* libfranka ≥ 0.18（建议 0.19+ / 0.20+）
+* franka_ros2 v2.x（例如 v2.3.0）
+
+### 机器人
+
+* FR3
+* System Image ≥ 5.9
+* 已安装 FCI Feature
+
+---
+
+## 三、Desk / FCI 准备
+
+### 1. 网络配置
+
+* 工作站：172.16.0.1
+* Robot Control：172.16.0.2
+* 网线必须接 Control LAN 口
+
+### 2. Desk 操作
+
+* 松刹车
+* Activate FCI
+* 确保无错误状态
+
+⚠️ 注意：
+
+* FCI 激活时 Desk 无法控制机器人
+* FCI 为独占资源
+
+---
+
+## 四、工作区结构
+
+```
+~/franka_il_ws/
+ ├── src/
+ │    ├── franka_ros2
+ │    ├── franka_spacemouse
+ │    └── 其他依赖包
+```
+
+---
+
+## 五、基础验证（Fake Hardware）
+
+```bash
+ros2 launch franka_fr3_moveit_config moveit.launch.py \
+  robot_ip:=dont-care \
+  use_fake_hardware:=true \
+  load_gripper:=false
+```
+
+验证点：
+
+* RViz 正常打开
+* MoveIt 正常
+* 无崩溃
+
+---
+
+## 六、真机连接验证
+
+```bash
+ros2 launch franka_fr3_moveit_config moveit.launch.py \
+  robot_ip:=172.16.0.2 \
+  use_fake_hardware:=false \
+  load_gripper:=false
+```
+
+验证点：
+
+* 无 UDP timeout
+* 控制器正常加载
+
+---
+
+## 七、SpaceMouse 控制链路
+
+### 1. 启动阻抗控制器（核心）
+
+```bash
+ros2 launch franka_arm_controllers joint_impedance_ik_controller.launch.py
+```
+
+### 2. 确认控制器状态
+
+```bash
+ros2 control list_controllers
+```
+
+必须为：
+
+```
+joint_impedance_ik_controller ... active
+```
+
+如果不是：
+
+```bash
+ros2 control set_controller_state joint_impedance_ik_controller active
+```
+
+---
+
+### 3. 启动 SpaceMouse
+
+```bash
+ros2 launch spacemouse_publisher spacemouse_publisher.launch.py
+```
+
+---
+
+### 4. 检查 Topic
+
+```bash
+ros2 topic info /franka_controller/target_cartesian_velocity_percent -v
+```
+
+正常状态：
+
+* Publisher: 1
+* Subscriber: 1
+
+---
+
+### 5. 操作方式
+
+⚠️ 必须按住 deadman 按钮
+
+* 按住按钮
+* 轻推 SpaceMouse
+* 机械臂开始运动
+
+---
+
+## 八、常见问题总结
+
+### 1. 机器人不动
+
+原因：
+
+* 控制器 inactive
+* 没按 deadman
+* topic 未连接
+
+---
+
+### 2. controller_manager 不存在
+
+原因：
+
+* launch 被 Ctrl+C
+* FCI 未激活
+
+---
+
+### 3. Connection to FCI refused
+
+原因：
+
+* 没 Activate FCI
+* 被其他程序占用
+
+---
+
+### 4. 有数据但不动
+
+原因：
+
+* 使用了错误控制器（MoveIt 的 trajectory controller）
+* 必须用 joint_impedance_ik_controller
+
+---
+
+### 5. 延迟问题（你当前遇到的）
+
+可能原因：
+
+* 非实时内核（最常见）
+* CPU 调度延迟
+* USB HID 读取频率
+
+优化建议：
+
+* 使用 PREEMPT_RT 内核
+* 提升进程优先级
+* 减少系统负载
+
+---
+
+## 九、最终正确启动顺序（最重要）
+
+1️⃣ Desk
+
+* 松刹车
+* Activate FCI
+
+2️⃣ 启动控制器
+
+```
+ros2 launch franka_arm_controllers joint_impedance_ik_controller.launch.py
+```
+
+3️⃣ 启动 SpaceMouse
+
+```
+ros2 launch spacemouse_publisher spacemouse_publisher.launch.py
+```
+
+4️⃣ 按住 deadman + 推动
+
+---
+
+## 十、你当前状态总结
+
+✅ FCI 正常
+✅ franka_ros2 正常
+✅ SpaceMouse 正常
+✅ 控制链路已打通
+
+当前仅剩优化项：
+➡️ 延迟 / 实时性
+
+---
+
+## 十一、后续可优化方向
+
+* RT Kernel（强烈建议）
+* 控制器参数调优
+* 速度/阻抗调节
+* 加入夹爪控制
+
+---
+
+✔ 到这里，你已经完成从 0 到 SpaceMouse 控制 FR3 的完整闭环 🎯
+
+
+
+
+source /opt/ros/humble/setup.bash
+cd ~/franka_il_ws
+colcon build --packages-select franka_arm_controllers --symlink-install
+source ~/franka_il_ws/install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch franka_arm_controllers joint_impedance_ik_controller.launch.py robot_config_file:=example_fr3_config.yaml
+
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch spacemouse_publisher spacemouse_publisher.launch.py config_file:=example_fr3_config.yaml
+
+
+
+
+source /opt/ros/humble/setup.bash
+source ~/franka_il_ws/install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export ROS_LOCALHOST_ONLY=0
+
+ros2 launch gripper_manager franka_gripper_client.launch.py config_file:=example_fr3_config.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
