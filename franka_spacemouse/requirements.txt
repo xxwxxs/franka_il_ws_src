@@ -1,0 +1,3 @@
+easyhid==0.0.10
+pyspacemouse==1.1.4
+numpy==1.26.4

@@ -1,0 +1,18 @@
+robot1:
+  arm_id: "fr3"
+  arm_prefix: ""
+  fake_sensor_commands: "false"
+  joint_sources: ["joint_states", "franka_gripper/joint_states"]
+  joint_state_rate: 30 
+  load_gripper: "true"
+  namespace: ""
+  robot_ip: "172.16.0.2"
+  urdf_file: "fr3/fr3.urdf.xacro"
+  use_fake_hardware: "false"
+  use_rviz: "false"
+  # Keep controller active after launch so teleop subscriber is present immediately.
+  start_controller_inactive: "false"
+  # Keep false unless you specifically need Franka state broadcaster topics.
+  spawn_franka_robot_state_broadcaster: "false"
+  # mounting roll, pitch, yaw in rad
+  arm_mounting_orientation: [0,0,0]

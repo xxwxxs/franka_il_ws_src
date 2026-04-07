@@ -1,0 +1,18 @@
+LEFT:
+  namespace: left
+  device_path: /dev/hidraw6
+  operator_position_front: true
+  command_mode: full
+  axis_mapping_linear: ['-y', 'x', 'z']
+  axis_mapping_angular: ['-roll', '-pitch', '-yaw']
+  axis_inversion_linear: [false, false, false]
+  axis_inversion_angular: [false, false, false]
+RIGHT:
+  namespace: right
+  device_path: /dev/hidraw7
+  operator_position_front: true
+  command_mode: full
+  axis_mapping_linear: ['-y', 'x', 'z']
+  axis_mapping_angular: ['-roll', '-pitch', '-yaw']
+  axis_inversion_linear: [false, false, false]
+  axis_inversion_angular: [false, false, false]

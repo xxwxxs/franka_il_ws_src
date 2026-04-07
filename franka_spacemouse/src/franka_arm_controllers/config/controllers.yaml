@@ -1,0 +1,67 @@
+"/**":
+  controller_manager:
+    ros__parameters:
+      update_rate: 1000  # Hz
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      franka_robot_state_broadcaster:
+        type: franka_robot_state_broadcaster/FrankaRobotStateBroadcaster
+
+      joint_impedance_ik_controller:
+        type: franka_arm_controllers/JointImpedanceIKController
+
+  joint_impedance_ik_controller:
+    ros__parameters:
+      k_gains:
+        - 600.0
+        - 600.0
+        - 600.0
+        - 600.0
+        - 250.0
+        - 150.0
+        - 50.0
+      d_gains:
+        - 30.0
+        - 30.0
+        - 30.0
+        - 30.0
+        - 15.0
+        - 10.0
+        - 5.0
+
+      # Teleop safety shaping
+      startup_hold_sec: 0.30
+      command_timeout_sec: 0.35
+      max_dt_for_integration_sec: 0.01
+      max_linear_speed: 0.05
+      max_angular_speed: 0.20
+      input_deadband: 0.05
+      input_smoothing_alpha: 0.16
+      linear_dominant_angular_suppression_enabled: true
+      linear_dominant_angular_suppression_ratio: 1.6
+      linear_dominant_angular_suppression_min_linear_norm: 0.015
+      linear_dominant_angular_suppression_scale: 0.0
+      linear_dominant_orientation_lock_enabled: true
+      teleop_translation_frame: base
+      ik_seed_current_state_blend: 0.35
+      ik_posture_bias: 0.00
+      keep_active_on_transient_update_failure: true
+      safe_hold_velocity_violation_count_threshold: 8
+      zero_input_velocity_epsilon: 1.0e-6
+      use_joint_state_fk_fallback: true
+
+      # Keep IK target close to current measured pose
+      max_cartesian_error: [0.006, 0.006, 0.006]
+      max_orientation_error_rad: 0.06
+
+      # Joint-space safety clamps
+      max_joint_velocity_limits: [0.10, 0.10, 0.10, 0.10, 0.12, 0.12, 0.14]
+      max_measured_joint_velocity_for_safe_hold: [0.55, 0.55, 0.55, 0.55, 0.65, 0.65, 0.75]
+      max_joint_position_error_for_torque: [0.03, 0.03, 0.03, 0.03, 0.04, 0.04, 0.04]
+      max_torque_command_limits: [40.0, 40.0, 40.0, 40.0, 15.0, 15.0, 15.0]
+      max_torque_rate_limits: [90.0, 90.0, 90.0, 90.0, 60.0, 60.0, 60.0]
+
+      ik_max_iterations: 80
+      ik_eps: 1.0e-6

@@ -1,0 +1,31 @@
+robot1:
+  namespace: ''
+  # Keep empty to use auto discovery and avoid hidraw index drift after reboot.
+  device_path: ''
+  auto_reconnect: true
+  reconnect_interval_sec: 0.5
+  enable_deadman: false
+  deadman_button_index: 1
+  # SE(3) input semantics tuning (IsaacLab-like).
+  linear_sensitivity: 1.0
+  angular_sensitivity: 1.0
+  input_deadzone: 0.0
+  intent_decoupling_enabled: true
+  intent_decoupling_ratio: 1.8
+  cross_intent_attenuation: 0.20
+  z_pitch_decoupling_enabled: true
+  z_pitch_dominance_ratio: 1.25
+  z_pitch_attenuation: 0.15
+  # Teleop test modes: full | translation_only | rotation_only
+  command_mode: translation_only
+  # Per-axis mapping from raw SpaceMouse state to SE(3) command.
+  axis_mapping_linear: ['-y', 'x', 'z']
+  axis_mapping_angular: ['-roll', '-pitch', '-yaw']
+  # Per-axis inversion after mapping.
+  axis_inversion_linear: [false, false, false]
+  axis_inversion_angular: [false, false, false]
+  # Axis calibration debug output.
+  debug_axis_calibration: false
+  debug_log_interval_sec: 0.5
+  enable_gripper_buttons: false
+  operator_position_front: true
